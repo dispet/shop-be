@@ -15,15 +15,15 @@ custom:
     includeModules: true
 
 functions:
-  getAllProducts:
-    handler: handler.getAllProducts
+  getProductsList:
+    handler: handler.getProductsList
     events:
       - http:
           path: products
           method: get
           cors: true
-  getProductById:
-    handler: handler.getProductById
+  getProductsById:
+    handler: handler.getProductsById
     events:
       - http:
           path: products/{productId}

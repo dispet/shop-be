@@ -4,7 +4,7 @@ const DEFAULT_HEADERS = {
   'Access-Control-Allow-Origin': '*'
 };
 
-export const getAllProducts = async (event) => {
+export const getProductsList = async (event) => {
   console.log('Lambda invocation with event: ', event);
   // Some logic ...
   // Don't forget about logging and testing

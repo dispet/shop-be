@@ -1,5 +1,9 @@
 import productList from './productList.json';
 
+const DEFAULT_HEADERS = {
+  'Access-Control-Allow-Origin': '*'
+};
+
 export const getProductById = async (event) => {
   console.log('Lambda invocation with event: ', event);
   // const { productId } = event ....
@@ -9,6 +13,7 @@ export const getProductById = async (event) => {
 
   return {
     statusCode: 200,
+    headers: DEFAULT_HEADERS,
     body: JSON.stringify(productList[0])
   };
 };

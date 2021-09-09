@@ -1,20 +1,40 @@
-import productList from './productList.json';
+'use strict';
+const ApiError = require('../utils/apiError');
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-const DEFAULT_HEADERS = {
-  'Access-Control-Allow-Origin': '*'
-};
+const { Client } = require('pg');
+import { dbOptions } from './dbOptions';
 
 export const getProductsById = async (event) => {
-  console.log('Lambda invocation with event: ', event);
-  // const { productId } = event ....
+  const client = new Client(dbOptions);
+  client.connect();
 
-  // Some logic ...
-  // Don't forget about logging and testing
+  try {
+    const { productId } = event.pathParameters;
+    if (!productId) throw new ApiError(400, 'Error! Please use the following path structure: /product/{id}');
+    if (!productId.match(uuidRegex)) throw new ApiError(400, 'Wrong product id format');
 
-  return {
-    statusCode: 200,
-    headers: DEFAULT_HEADERS,
-    body: JSON.stringify(productList[0])
-  };
+    const { rows } = await client.query(
+        `select * from products p left join stocks s on p.id = s.product_id where p.id = '${productId}'`
+    );
+    if (rows.length !== 1) throw new ApiError(500, 'Wrong DB response format');
+
+    const product = rows[0];
+    if (!product) throw new ApiError(404, `Couldn't find product with id ${productId}`);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(
+          product
+      ),
+    };
+
+  } catch (error) {
+    return {
+      statusCode: error.statusCode || 500,
+      body: error.message
+    };
+  } finally {
+    client.end()
+  }
 };
-

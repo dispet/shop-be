@@ -4,6 +4,10 @@
   "description": "Product service (API based)",
   "main": "handler.js",
   "scripts": {
+    "build": "webpack",
+    "deploy": "npm run build && sls deploy --stage dev",
+    "local:products": "npm run build && npx sls invoke local -f getProductsList --stage local-dev",
+    "local:products:id": "npm run build && npx sls invoke local -f getProductsById --path src/mock.json --stage local-dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

@@ -1,5 +1,3 @@
-'use strict';
-
 const ApiError = require('../utils/apiError');
 const corsHeaders = {
     headers: {
@@ -12,7 +10,7 @@ const { Client } = require('pg');
 import { dbOptions } from './dbOptions';
 
 export const addProduct = async (event) => {
-
+    console.log('Lambda invocation with event: ', event);
     const client = new Client(dbOptions);
     client.connect();
 

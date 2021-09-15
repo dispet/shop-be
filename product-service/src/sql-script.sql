@@ -4,12 +4,12 @@ create table products (
     id uuid primary key default uuid_generate_v4(),
     title text not null,
     description text,
-    price integer
+    price integer CHECK (price > -1)
 )
 
 create table stocks (
 	product_id uuid unique,
-	count integer,
+	count integer CHECK (price > -1),
 	foreign key ("product_id") references "products" ("id")
 )
 

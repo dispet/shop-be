@@ -1,4 +1,3 @@
-'use strict';
 const ApiError = require('../utils/apiError');
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -6,6 +5,7 @@ const { Client } = require('pg');
 import { dbOptions } from './dbOptions';
 
 export const getProductsById = async (event) => {
+  console.log('Lambda invocation with event: ', event);
   const client = new Client(dbOptions);
   client.connect();
 

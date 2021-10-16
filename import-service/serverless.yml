@@ -6,6 +6,13 @@ provider:
   lambdaHashingVersion: 20201221
   stage: dev
   region: eu-west-1
+
+  environment:
+    SQS_URL:
+      Ref: catalogItemsQueue
+    SNS_ARN:
+      Ref: createProductTopic
+
   iam:
     role:
       statements:
@@ -18,6 +25,33 @@ provider:
                  - "s3:*"
           Resource:
                     - "arn:aws:s3:::products-bucket-aws-my/*"
+        - Effect: "Allow"
+          Action:
+                 - "sqs:*"
+          Resource:
+                  - Fn::GetAtt: [ catalogItemsQueue, Arn ]
+        - Effect: "Allow"
+          Action: "sns:*"
+          Resource:
+           Ref: createProductTopic
+
+resources:
+  Resources:
+    catalogItemsQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: catalog-items-queue
+    createProductTopic:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        TopicName: create-product-topic
+    SNSSubscription:
+      Type: "AWS::SNS::Subscription"
+      Properties:
+        Endpoint: sdk256teplo@gmail.com
+        Protocol: email
+        TopicArn:
+          Ref: createProductTopic
 
 plugins:
   - serverless-offline
@@ -42,3 +76,13 @@ functions:
           rules:
                 - prefix: uploaded/
           existing: true
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - catalogItemsQueue
+              - Arn
+          batchSize: 5
+
